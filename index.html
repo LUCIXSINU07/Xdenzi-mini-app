@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XDENZI</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+      background:
+        radial-gradient(circle at top, #333, #111 45%, #050505);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: auto;
+    }
+
+    .logo {
+      width: 95px;
+      height: 95px;
+      margin: 35px auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fff, #777);
+      color: #111;
+      font-size: 25px;
+      font-weight: 900;
+      box-shadow: 0 0 35px #ffffff30;
+    }
+
+    h1 {
+      text-align: center;
+      letter-spacing: 6px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #999;
+      margin-top: 8px;
+    }
+
+    .card {
+      margin-top: 25px;
+      padding: 22px;
+      border-radius: 22px;
+      background: #ffffff12;
+      border: 1px solid #ffffff1c;
+      backdrop-filter: blur(15px);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar {
+      width: 55px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #222;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .profile small {
+      color: #888;
+    }
+
+    .profile h2 {
+      margin-top: 4px;
+      font-size: 18px;
+    }
+
+    .buttons {
+      display: grid;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ffffff20;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, #333, #111);
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.primary {
+      color: #111;
+      background: linear-gradient(135deg, #fff, #aaa);
+    }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 12px;
+      text-align: center;
+      border-radius: 12px;
+      background: #ffffff0d;
+      color: #999;
+      font-size: 13px;
+    }
+
+    footer {
+      margin-top: 25px;
+      text-align: center;
+      color: #555;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="logo">XD</div>
+
+    <h1>XDENZI</h1>
+
+    <p class="subtitle">Telegram Mini App</p>
+
+    <div class="card">
+
+      <div class="profile">
+        <div class="avatar" id="avatar">?</div>
+
+        <div>
+          <small>Telegram User</small>
+          <h2 id="username">Guest</h2>
+        </div>
+      </div>
+
+      <div class="buttons">
+
+        <button class="primary" onclick="profile()">
+          👤 MY PROFILE
+        </button>
+
+        <button onclick="launch()">
+          🚀 LAUNCH
+        </button>
+
+        <button onclick="about()">
+          ℹ️ ABOUT
+        </button>
+
+        <button onclick="closeApp()">
+          ✕ CLOSE
+        </button>
+
+      </div>
+
+      <div class="status" id="status">
+        Connecting to Telegram...
+      </div>
+
+    </div>
+
+    <footer>
+      XDENZI • Telegram Mini App
+    </footer>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    const user = tg.initDataUnsafe?.user;
+
+    if (user) {
+      const name =
+        user.first_name ||
+        user.username ||
+        "Telegram User";
+
+      document.getElementById("username").textContent = name;
+
+      document.getElementById("avatar").textContent =
+        name.charAt(0).toUpperCase();
+
+      document.getElementById("status").textContent =
+        "Connected as " + name;
+    } else {
+      document.getElementById("status").textContent =
+        "Open this website from Telegram";
+    }
+
+    function profile() {
+      if (!user) {
+        tg.showAlert(
+          "Please open this Mini App from Telegram."
+        );
+        return;
+      }
+
+      tg.showPopup({
+        title: "👤 Profile",
+        message:
+          "Name: " + (user.first_name || "") +
+          "\nUsername: @" + (user.username || "Not set"),
+        buttons: [
+          {
+            id: "ok",
+            type: "default",
+           
