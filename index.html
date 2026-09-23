@@ -2,375 +2,226 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111111">
-
-  <title>XDENZI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090b18">
+  <title>XDENZI • Telegram Mini App</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      padding: 20px;
-      color: white;
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:Arial,sans-serif}
+    body{
+      color:#fff;
       background:
-        radial-gradient(circle at top, #333, #111 45%, #050505);
+        radial-gradient(circle at 15% 10%,rgba(126,47,255,.30),transparent 28%),
+        radial-gradient(circle at 90% 30%,rgba(0,174,255,.25),transparent 30%),
+        linear-gradient(145deg,#070914,#101326 50%,#05060c);
+      overflow-x:hidden;
+    }
+    body:before,body:after{
+      content:"";position:fixed;border-radius:50%;filter:blur(60px);
+      pointer-events:none;opacity:.35;z-index:-1
+    }
+    body:before{width:180px;height:180px;background:#7b2cff;top:8%;left:-80px;animation:float1 7s ease-in-out infinite}
+    body:after{width:200px;height:200px;background:#00aaff;right:-90px;bottom:12%;animation:float2 8s ease-in-out infinite}
+    @keyframes float1{50%{transform:translate(45px,35px)}}
+    @keyframes float2{50%{transform:translate(-40px,-30px)}}
+
+    .app{width:min(480px,100%);margin:auto;padding:20px 18px 30px}
+    .brand{text-align:center;padding-top:22px}
+    .logo{
+      width:100px;height:100px;margin:auto;display:flex;align-items:center;justify-content:center;
+      border-radius:50%;font-size:28px;font-weight:900;color:#fff;
+      background:linear-gradient(135deg,#7b2cff,#168cff);
+      border:2px solid rgba(255,255,255,.25);
+      box-shadow:0 0 22px rgba(123,44,255,.65),0 0 45px rgba(0,170,255,.28);
+      animation:logoPulse 2.8s ease-in-out infinite
+    }
+    @keyframes logoPulse{
+      50%{transform:scale(1.05);box-shadow:0 0 35px rgba(123,44,255,.9),0 0 65px rgba(0,170,255,.35)}
+    }
+    h1{margin-top:18px;font-size:31px;letter-spacing:8px;text-shadow:0 0 18px rgba(156,80,255,.6)}
+    .subtitle{margin-top:8px;color:#aeb5cf;font-weight:600}
+
+    .card{
+      margin-top:24px;padding:20px;border-radius:24px;
+      background:rgba(13,16,32,.78);
+      border:1px solid rgba(160,100,255,.28);
+      box-shadow:0 15px 45px rgba(0,0,0,.35),0 0 25px rgba(70,50,160,.18);
+      backdrop-filter:blur(16px);
+      animation:cardIn .7s ease both
+    }
+    @keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+    .video-frame{
+      padding:3px;border-radius:20px;
+      background:linear-gradient(120deg,#7b2cff,#00aaff,#d12cff,#7b2cff);
+      background-size:300% 300%;
+      animation:gradientMove 5s ease infinite;
+      box-shadow:0 0 25px rgba(123,44,255,.35)
+    }
+    @keyframes gradientMove{
+      0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}
+    }
+    video{
+      width:100%;display:block;aspect-ratio:16/9;object-fit:cover;
+      border-radius:17px;background:#000
     }
 
-    .app {
-      max-width: 480px;
-      margin: auto;
+    .profile{display:flex;align-items:center;gap:14px;margin-top:20px}
+    .avatar{
+      width:58px;height:58px;flex:0 0 58px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#7b2cff,#008cff);
+      font-size:22px;font-weight:900;
+      border:2px solid rgba(255,255,255,.18);
+      overflow:hidden
     }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:none}
+    .profile small{color:#9299b4;font-weight:600}
+    .profile h2{margin-top:4px;font-size:19px;word-break:break-word}
 
-    .logo {
-      width: 95px;
-      height: 95px;
-      margin: 35px auto 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #fff, #777);
-      color: #111;
-      font-size: 25px;
-      font-weight: 900;
-      box-shadow: 0 0 35px #ffffff30;
+    .buttons{display:grid;gap:11px;margin-top:20px}
+    button{
+      min-height:52px;width:100%;border:1px solid rgba(255,255,255,.12);
+      border-radius:15px;color:#fff;font-size:16px;font-weight:800;
+      background:linear-gradient(135deg,rgba(42,45,70,.95),rgba(16,18,30,.95));
+      cursor:pointer;transition:.18s;
     }
-
-    h1 {
-      text-align: center;
-      letter-spacing: 6px;
-      font-size: 28px;
+    button:hover{transform:translateY(-1px)}
+    button:active{transform:scale(.98)}
+    .primary{
+      background:linear-gradient(135deg,#7b2cff,#008cff);
+      box-shadow:0 8px 25px rgba(87,45,255,.28)
     }
-
-    .subtitle {
-      text-align: center;
-      color: #999;
-      margin-top: 8px;
+    .music{
+      background:linear-gradient(135deg,#4614a8,#0079c9)
     }
-
-    .card {
-      margin-top: 25px;
-      padding: 22px;
-      border-radius: 22px;
-      background: #ffffff12;
-      border: 1px solid #ffffff1c;
-      backdrop-filter: blur(15px);
+    .status{
+      margin-top:15px;padding:12px;border-radius:13px;text-align:center;
+      color:#aab1c8;background:rgba(255,255,255,.055);font-size:13px
     }
-
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .avatar {
-      width: 55px;
-      height: 55px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #222;
-      font-size: 20px;
-      font-weight: bold;
-      overflow: hidden;
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .profile small {
-      color: #888;
-    }
-
-    .profile h2 {
-      margin-top: 4px;
-      font-size: 18px;
-    }
-
-    .buttons {
-      display: grid;
-      gap: 12px;
-      margin-top: 25px;
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      border: 1px solid #ffffff20;
-      border-radius: 14px;
-      color: white;
-      background: linear-gradient(135deg, #333, #111);
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .15s;
-    }
-
-    button.primary {
-      color: #111;
-      background: linear-gradient(135deg, #fff, #aaa);
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    .status {
-      margin-top: 18px;
-      padding: 12px;
-      text-align: center;
-      border-radius: 12px;
-      background: #ffffff0d;
-      color: #999;
-      font-size: 13px;
-    }
-
-    footer {
-      margin-top: 25px;
-      text-align: center;
-      color: #555;
-      font-size: 12px;
-    }
+    footer{text-align:center;color:#646b83;font-size:12px;margin-top:20px}
+    .hint{text-align:center;color:#737b95;font-size:12px;margin-top:9px}
   </style>
 </head>
 
 <body>
+  <main class="app">
+    <section class="brand">
+      <div class="logo">XD</div>
+      <h1>XDENZI</h1>
+      <p class="subtitle">Telegram Mini App</p>
+    </section>
 
-  <div class="app">
-
-    <div class="logo">XD</div>
-
-    <h1>XDENZI</h1>
-
-    <p class="subtitle">Telegram Mini App</p>
-
-    <div class="card">
+    <section class="card">
+      <div class="video-frame">
+        <video id="xdenziVideo" controls playsinline preload="metadata" loop>
+          <source src="xdenzi.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
 
       <div class="profile">
-
-        <div class="avatar" id="avatar">?</div>
-
+        <div class="avatar" id="avatar">XD</div>
         <div>
           <small>Telegram User</small>
           <h2 id="username">Guest</h2>
         </div>
-
       </div>
 
       <div class="buttons">
-
-        <button class="primary" onclick="profile()">
-          👤 MY PROFILE
-        </button>
-
-        <button onclick="launch()">
-          🚀 LAUNCH
-        </button>
-
-        <button onclick="about()">
-          ℹ️ ABOUT
-        </button>
-
-        <button onclick="closeApp()">
-          ✕ CLOSE
-        </button>
-
+        <button class="primary" id="profileBtn">👤 MY PROFILE</button>
+        <button class="music" id="musicBtn">🎵 PLAY VIDEO / MUSIC</button>
+        <button id="launchBtn">🚀 LAUNCH</button>
+        <button id="aboutBtn">ℹ️ ABOUT</button>
+        <button id="closeBtn">✕ CLOSE</button>
       </div>
 
-      <div class="status" id="status">
-        Connecting to Telegram...
-      </div>
+      <div class="status" id="status">Connecting to Telegram...</div>
+      <div class="hint">Tap Play to start the video with sound.</div>
+    </section>
 
-    </div>
-
-    <footer>
-      XDENZI • Telegram Mini App
-    </footer>
-
-  </div>
-
+    <footer>XDENZI • Telegram Mini App</footer>
+  </main>
 
   <script>
-
-    // Telegram WebApp
-    const tg = window.Telegram?.WebApp;
-
-    let user = null;
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const video = document.getElementById("xdenziVideo");
+    const usernameEl = document.getElementById("username");
+    const avatarEl = document.getElementById("avatar");
+    const statusEl = document.getElementById("status");
 
     if (tg) {
-
       tg.ready();
       tg.expand();
+    }
 
-      // Telegram user data
-      user = tg.initDataUnsafe?.user || null;
+    const user = tg?.initDataUnsafe?.user;
 
-      if (user) {
+    if (user) {
+      const name = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username || "Telegram User";
+      usernameEl.textContent = user.username ? "@" + user.username : name;
+      avatarEl.textContent = (user.first_name || name).charAt(0).toUpperCase();
+      statusEl.textContent = "Connected as " + name;
 
-        const name =
-          user.first_name ||
-          user.username ||
-          "Telegram User";
-
-        document.getElementById("username").textContent = name;
-
-        document.getElementById("avatar").textContent =
-          name.charAt(0).toUpperCase();
-
-        document.getElementById("status").textContent =
-          "Connected as " + name;
-
-      } else {
-
-        document.getElementById("status").textContent =
-          "Telegram connected";
-
+      if (user.photo_url) {
+        const img = document.createElement("img");
+        img.src = user.photo_url;
+        img.alt = "Telegram profile photo";
+        img.onload = () => {
+          avatarEl.textContent = "";
+          avatarEl.appendChild(img);
+          img.style.display = "block";
+        };
       }
-
     } else {
-
-      document.getElementById("status").textContent =
-        "Open this website from Telegram";
-
+      statusEl.textContent = "Open this Mini App from Telegram";
     }
 
-
-    // PROFILE
-    function profile() {
-
-      if (!tg) {
-        alert("Please open this Mini App from Telegram.");
-        return;
+    document.getElementById("musicBtn").addEventListener("click", async () => {
+      try {
+        if (video.paused) {
+          await video.play();
+        } else {
+          video.pause();
+        }
+      } catch {
+        statusEl.textContent = "Tap the video Play button to start.";
       }
+    });
 
+    document.getElementById("profileBtn").addEventListener("click", () => {
       if (!user) {
-        tg.showAlert(
-          "Telegram user information is not available."
-        );
+        tg?.showAlert?.("Please open this Mini App from Telegram.");
         return;
       }
-
-      const name =
-        user.first_name ||
-        "Not set";
-
-      const username =
-        user.username ?
-        "@" + user.username :
-        "Not set";
-
-      const id =
-        user.id ||
-        "Not available";
-
-      tg.showPopup({
-
+      const uname = user.username ? "@" + user.username : "Not set";
+      tg?.showPopup?.({
         title: "👤 Profile",
-
-        message:
-          "Name: " + name +
-          "\nUsername: " + username +
-          "\nTelegram ID: " + id,
-
-        buttons: [
-          {
-            id: "ok",
-            type: "default",
-            text: "OK"
-          }
-        ]
-
+        message: "Name: " + ([user.first_name, user.last_name].filter(Boolean).join(" ") || "Not set") +
+                 "\nUsername: " + uname,
+        buttons: [{id:"ok", type:"default", text:"OK"}]
       });
+    });
 
-    }
+    document.getElementById("launchBtn").addEventListener("click", () => {
+      video.play().catch(() => {});
+      statusEl.textContent = "XDENZI launched 🚀";
+    });
 
+    document.getElementById("aboutBtn").addEventListener("click", () => {
+      tg?.showPopup?.({
+        title: "XDENZI",
+        message: "Purple + Blue animated Telegram Mini App.",
+        buttons: [{id:"ok", type:"default", text:"OK"}]
+      }) || alert("XDENZI • Telegram Mini App");
+    });
 
-    // LAUNCH
-    function launch() {
-
-      if (tg) {
-
-        tg.showAlert(
-          "🚀 XDENZI Mini App launched successfully!"
-        );
-
-      } else {
-
-        alert(
-          "🚀 XDENZI Mini App launched successfully!"
-        );
-
-      }
-
-    }
-
-
-    // ABOUT
-    function about() {
-
-      if (tg) {
-
-        tg.showPopup({
-
-          title: "ℹ️ XDENZI",
-
-          message:
-            "XDENZI Telegram Mini App\n\n" +
-            "Version: 1.0\n" +
-            "Powered by Telegram WebApp",
-
-          buttons: [
-            {
-              id: "ok",
-              type: "default",
-              text: "OK"
-            }
-          ]
-
-        });
-
-      } else {
-
-        alert(
-          "XDENZI Telegram Mini App\nVersion 1.0"
-        );
-
-      }
-
-    }
-
-
-    // CLOSE
-    function closeApp() {
-
-      if (tg) {
-
-        tg.close();
-
-      } else {
-
-        alert(
-          "Please close this browser tab."
-        );
-
-      }
-
-    }
-
+    document.getElementById("closeBtn").addEventListener("click", () => {
+      tg?.close?.();
+    });
   </script>
-
 </body>
 </html>
