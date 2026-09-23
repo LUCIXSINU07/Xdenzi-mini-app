@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+
   <title>XDENZI</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -80,6 +82,13 @@
       background: #222;
       font-size: 20px;
       font-weight: bold;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .profile small {
@@ -107,6 +116,7 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      transition: .15s;
     }
 
     button.primary {
@@ -150,12 +160,14 @@
     <div class="card">
 
       <div class="profile">
+
         <div class="avatar" id="avatar">?</div>
 
         <div>
           <small>Telegram User</small>
           <h2 id="username">Guest</h2>
         </div>
+
       </div>
 
       <div class="buttons">
@@ -190,47 +202,175 @@
 
   </div>
 
+
   <script>
-    const tg = window.Telegram.WebApp;
 
-    tg.ready();
-    tg.expand();
+    // Telegram WebApp
+    const tg = window.Telegram?.WebApp;
 
-    const user = tg.initDataUnsafe?.user;
+    let user = null;
 
-    if (user) {
-      const name =
-        user.first_name ||
-        user.username ||
-        "Telegram User";
+    if (tg) {
 
-      document.getElementById("username").textContent = name;
+      tg.ready();
+      tg.expand();
 
-      document.getElementById("avatar").textContent =
-        name.charAt(0).toUpperCase();
+      // Telegram user data
+      user = tg.initDataUnsafe?.user || null;
 
-      document.getElementById("status").textContent =
-        "Connected as " + name;
+      if (user) {
+
+        const name =
+          user.first_name ||
+          user.username ||
+          "Telegram User";
+
+        document.getElementById("username").textContent = name;
+
+        document.getElementById("avatar").textContent =
+          name.charAt(0).toUpperCase();
+
+        document.getElementById("status").textContent =
+          "Connected as " + name;
+
+      } else {
+
+        document.getElementById("status").textContent =
+          "Telegram connected";
+
+      }
+
     } else {
+
       document.getElementById("status").textContent =
         "Open this website from Telegram";
+
     }
 
+
+    // PROFILE
     function profile() {
+
+      if (!tg) {
+        alert("Please open this Mini App from Telegram.");
+        return;
+      }
+
       if (!user) {
         tg.showAlert(
-          "Please open this Mini App from Telegram."
+          "Telegram user information is not available."
         );
         return;
       }
 
+      const name =
+        user.first_name ||
+        "Not set";
+
+      const username =
+        user.username ?
+        "@" + user.username :
+        "Not set";
+
+      const id =
+        user.id ||
+        "Not available";
+
       tg.showPopup({
+
         title: "👤 Profile",
+
         message:
-          "Name: " + (user.first_name || "") +
-          "\nUsername: @" + (user.username || "Not set"),
+          "Name: " + name +
+          "\nUsername: " + username +
+          "\nTelegram ID: " + id,
+
         buttons: [
           {
             id: "ok",
             type: "default",
-           
+            text: "OK"
+          }
+        ]
+
+      });
+
+    }
+
+
+    // LAUNCH
+    function launch() {
+
+      if (tg) {
+
+        tg.showAlert(
+          "🚀 XDENZI Mini App launched successfully!"
+        );
+
+      } else {
+
+        alert(
+          "🚀 XDENZI Mini App launched successfully!"
+        );
+
+      }
+
+    }
+
+
+    // ABOUT
+    function about() {
+
+      if (tg) {
+
+        tg.showPopup({
+
+          title: "ℹ️ XDENZI",
+
+          message:
+            "XDENZI Telegram Mini App\n\n" +
+            "Version: 1.0\n" +
+            "Powered by Telegram WebApp",
+
+          buttons: [
+            {
+              id: "ok",
+              type: "default",
+              text: "OK"
+            }
+          ]
+
+        });
+
+      } else {
+
+        alert(
+          "XDENZI Telegram Mini App\nVersion 1.0"
+        );
+
+      }
+
+    }
+
+
+    // CLOSE
+    function closeApp() {
+
+      if (tg) {
+
+        tg.close();
+
+      } else {
+
+        alert(
+          "Please close this browser tab."
+        );
+
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>
